@@ -1,11 +1,6 @@
 ﻿namespace KTANE_Diffusal_Assistant.Solvers;
 
-public class Solver
+public abstract class Solver(Expert expert)
 {
-    public Expert expert;
-
-    public Solver(Expert expert)
-    {
-        this.expert = expert;
-    }
+    public Expert expert = expert;
 }

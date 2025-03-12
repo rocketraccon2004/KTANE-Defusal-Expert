@@ -34,11 +34,6 @@ namespace KTANE_Diffusal_Assistant
             { "3d Maze 4", Grammars._3dMazeStage4Grammar },
         };
 
-        private Dictionary<string, Module> modules = new()
-        {
-            { "3dMaze", new _3DMaze() }
-        };
-
         private Dictionary<string, int> numberWordPairs = new Dictionary<string, int>()
         {
             { "One", 1 },
@@ -57,10 +52,12 @@ namespace KTANE_Diffusal_Assistant
         public Expert(MainForm mainForm)
         {
             this.mainForm = mainForm;
+            this.mainForm.expert = this;
             sre = new SpeechRecognitionEngine(new CultureInfo("en-GB"));
             synth = new SpeechSynthesizer();
             sre.SpeechRecognized += onSpeechRecognised;
             sre.SetInputToDefaultAudioDevice();
+            synth.SetOutputToDefaultAudioDevice();
             loadGrammar("MainMenu");
             bomb = new Bomb();
         }
@@ -124,10 +121,11 @@ namespace KTANE_Diffusal_Assistant
                         }
 
                         string moduleNameFixed = moduleName.Replace(" ", string.Empty);
-                        currentModule = modules[moduleNameFixed];
+                        currentModule = getModule(moduleNameFixed);
                         currentModule.name = moduleName;
                         currentModule.bomb = bomb;
                         currentState = State.Diffusing;
+                        currentSolver = currentModule.solver;
                         loadGrammar(moduleName);
                         return moduleName + getModuleStartText();
                     }
@@ -248,7 +246,8 @@ namespace KTANE_Diffusal_Assistant
                     switch (currentModule.name)
                     {
                         case "3d Maze ":
-                            return solve3dMaze(speech);
+                            _3dMazeSolver solver = currentSolver as _3dMazeSolver;
+                            return solver.solve(speech);
                     }
 
                     goto default;
@@ -298,7 +297,11 @@ namespace KTANE_Diffusal_Assistant
                 msgBox = true;
                 fixedSpeech = toSay.Replace("/msgbox:", String.Empty);
             }
-
+            else
+            {
+                fixedSpeech = toSay;
+            }
+            
             string fixedText = toSay.Replace("jason", "json");
             if (fixSpaces)
                 fixedText = fixedText.Replace(", ", string.Empty);
@@ -308,6 +311,19 @@ namespace KTANE_Diffusal_Assistant
                 synth.Speak(fixedSpeech);
             else
                 MessageBox.Show(fixedSpeech);
+            //synth.Speak(fixedSpeech);
+        }
+
+        public Module getModule(string moduleName)
+        {
+            Dictionary<string, Module> modules = new()
+            {
+                { "3dMaze", new _3DMaze() }
+            };
+
+            Module toReturn = modules[moduleName];
+            toReturn.expert = this;
+            return toReturn;
         }
 
         // private int getSpeechSpeed()

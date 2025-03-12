@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using KTANE_Diffusal_Assistant.Solvers;
 
 namespace KTANE_Diffusal_Assistant.Modules
 {
@@ -37,6 +38,7 @@ namespace KTANE_Diffusal_Assistant.Modules
         public _3DMaze()
         {
             Maze = new Node[8, 8];
+            solver = new _3dMazeSolver(expert);
         }
 
         public enum Walls

@@ -5,6 +5,7 @@ namespace KTANE_Diffusal_Assistant
 {
     public partial class MainForm : Form
     {
+        public Expert expert;
         public MainForm()
         {
             InitializeComponent();
@@ -22,7 +23,7 @@ namespace KTANE_Diffusal_Assistant
 
         private void onVoiceChanged(object sender, EventArgs e)
         {
-            Expert.instance.SetVoice(comboBox1.Items[comboBox1.SelectedIndex].ToString());
+            expert.SetVoice(comboBox1.Items[comboBox1.SelectedIndex].ToString());
         }
 
         public void setResponse(string response)
@@ -37,17 +38,17 @@ namespace KTANE_Diffusal_Assistant
 
         private void listenButtonClicked(object sender, EventArgs e)
         {
-            if (!Expert.instance.isListening)
+            if (!expert.isListening)
             {
                 button1.BackColor = Color.Red;
                 button1.Text = "Stop Listening";
-                Expert.instance.startListening();
+                expert.startListening();
             }
             else
             {
                 button1.BackColor = Color.Green;
                 button1.Text = "Start Listening";
-                Expert.instance.stopListening();
+                expert.stopListening();
             }
         }
     }
